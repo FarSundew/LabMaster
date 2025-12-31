@@ -1,0 +1,42 @@
+﻿@model LabMaster.Models.Laboratorio
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Laboratorio</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Carrera.NombreCarrera)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Carrera.NombreCarrera)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NombreLab)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NombreLab)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Capacidad)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Capacidad)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.LabID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

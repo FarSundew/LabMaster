@@ -1,0 +1,93 @@
+﻿@model LabMaster.Models.Reserva
+
+@{
+    ViewBag.Title = "Confirmar Detalles de Reserva";
+}
+
+<div class="container" style="margin-top:20px;">
+    <div class="page-header">
+        <h2><i class="glyphicon glyphicon-check"></i> Confirmar Detalles de la Reserva</h2>
+        <p class="lead">Laboratorio: <strong>@ViewBag.LabNombre</strong></p>
+    </div>
+
+    @using (Html.BeginForm("GuardarReserva", "Reservas", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(false, "Corrija los siguientes errores:", new { @class = "alert alert-danger" })
+        @Html.HiddenFor(m => m.LabID)
+        @Html.HiddenFor(m => m.HoraInicio) @* Aquí viaja el string con todos los horarios *@
+
+        <div class="row">
+            <div class="col-md-7">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Información de la Práctica</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label>Motivo de la práctica o nombre de la materia:</label>
+                            @Html.TextAreaFor(m => m.Motivo, new { @class = "form-control", rows = "4", required = "required", placeholder = "Describa brevemente el uso del laboratorio..." })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><i class="glyphicon glyphicon-time"></i> Resumen de Horarios Seleccionados</h3>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="list-group">
+                            @if (ViewBag.HorariosParaMostrar != null)
+                            {
+                                foreach (var item in (List<string>)ViewBag.HorariosParaMostrar)
+                                {
+                                    <li class="list-group-item">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                        <strong>@item.Replace("|", " a las ")</strong>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><i class="glyphicon glyphicon-wrench"></i> Insumos Disponibles (Su Carrera)</h3>
+                    </div>
+                    <div class="panel-body">
+                        <p class="small text-muted">Seleccione los materiales que solicitará para esta sesión:</p>
+                        <hr />
+
+                        @if (ViewBag.Insumos != null && ((List<LabMaster.Models.Insumo>)ViewBag.Insumos).Any())
+                        {
+                            foreach (var insumo in (List<LabMaster.Models.Insumo>)ViewBag.Insumos)
+                            {
+                                <div class="checkbox" style="padding: 5px; border-bottom: 1px solid #eee;">
+                                    <label style="font-size: 1.1em;">
+                                        <input type="checkbox" name="insumosSeleccionados" value="@insumo.InsumoID" />
+                                        <strong>@insumo.NombreInsumo</strong>
+                                        <span class="badge pull-right">Stock: @insumo.Stock</span>
+                                    </label>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning">
+                                <i class="glyphicon glyphicon-exclamation-sign"></i> No hay insumos registrados o con stock disponible para su área.
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="btn btn-success btn-lg btn-block" style="padding: 15px; font-weight: bold;">
+                        <i class="glyphicon glyphicon-floppy-disk"></i> FINALIZAR Y GUARDAR RESERVA
+                    </button>
+                    <a href="@Url.Action("VerCalendario", new { id = Model.LabID })" class="btn btn-default btn-block">Regresar al Calendario</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

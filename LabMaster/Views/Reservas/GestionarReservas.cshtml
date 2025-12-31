@@ -1,0 +1,102 @@
+﻿@model IEnumerable<LabMaster.Models.Reserva>
+
+@{
+    ViewBag.Title = "Panel de Administración - Reservas";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="page-header">
+                <i class="glyphicon glyphicon-list-alt"></i> Control Global de Reservas
+            </h2>
+            <p class="text-muted">Lista completa de horarios apartados por los docentes en todas las carreras.</p>
+        </div>
+    </div>
+
+    <div class="panel panel-default shadow-sm">
+        <div class="panel-heading bg-primary" style="color:white;">
+            <h3 class="panel-title">Historial de Solicitudes</h3>
+        </div>
+        <div class="panel-body">
+            <table class="table table-hover table-striped" id="tablaGestion">
+                <thead>
+                    <tr>
+                        <th>Docente / Maestro</th>
+                        <th>Laboratorio</th>
+                        <th class="text-center">Día y Hora</th>
+                        <th>Motivo de la Práctica</th>
+                        <th>Fecha de Solicitud</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @* Mostramos el nombre completo guardado en Identity *@
+                                    <span style="font-weight:bold; color:#2c3e50;">
+                                        <i class="glyphicon glyphicon-user"></i> @(item.Usuario?.NombreCompleto ?? "Usuario no identificado")
+                                    </span>
+                                    <br />
+                                    <small class="text-info">@(item.Usuario?.Email ?? "")</small>
+                                </td>
+                                <td>
+                                    <i class="glyphicon glyphicon-blackboard"></i> @(item.Laboratorio?.NombreLab ?? "—")
+                                    <br />
+                                    <small class="text-muted">@(item.Laboratorio?.Carrera?.NombreCarrera ?? "")</small>
+                                </td>
+                                <td class="text-center">
+                                    @* Reflejamos la hora guardada desde el calendario *@
+                                    <span class="label label-info" style="font-size: 0.9em;">
+                                        @item.HoraInicio
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Motivo))
+                                    {
+                                        <span title="@item.Motivo">
+                                            @(item.Motivo.Length > 30 ? item.Motivo.Substring(0, 30) + "..." : item.Motivo)
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <em class="text-muted">Sin motivo especificado</em>
+                                    }
+                                </td>
+                                <td>@item.FechaReserva.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td class="text-center">
+                                    <button class="btn btn-danger btn-xs" title="Cancelar Reserva" onclick="confirmarCancelacion(@item.ReservaID)">
+                                        <i class="glyphicon glyphicon-remove"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-warning">
+                                <strong>No se encontraron registros en la base de datos.</strong>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        function confirmarCancelacion(id) {
+            if (confirm("¿Está seguro de que desea cancelar esta reserva? Esta acción liberará el espacio en el calendario.")) {
+                // Aquí iría tu lógica de AJAX o redirección para eliminar
+                console.log("Cancelando reserva ID: " + id);
+            }
+        }
+    </script>
+}

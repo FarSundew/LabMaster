@@ -1,0 +1,66 @@
+﻿@model IEnumerable<LabMaster.Models.Laboratorio>
+
+<div class="container-fluid">
+    <ol class="breadcrumb" style="background: white; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <li><a href="@Url.Action("SeleccionarCarrera", "Reservas")">Carreras</a></li>
+        <li class="active">@ViewBag.CarreraNombre</li>
+    </ol>
+
+    <div class="row">
+        <div class="col-md-12 text-center" style="margin-bottom: 30px;">
+            <h1 style="font-weight: bold; color: #2c3e50;">Laboratorios: @ViewBag.CarreraNombre</h1>
+            <p class="text-muted">Seleccione una unidad para verificar horarios disponibles</p>
+        </div>
+    </div>
+
+    <div class="row">
+        @if (!Model.Any())
+        {
+            <div class="col-md-6 col-md-offset-3">
+                <div class="alert alert-warning text-center">
+                    <i class="glyphicon glyphicon-exclamation-sign"></i> No hay laboratorios disponibles en esta carrera.
+                </div>
+            </div>
+        }
+
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4">
+                <div class="lab-card">
+                    <div class="lab-icon">
+                        <i class="glyphicon glyphicon-blackboard"></i>
+                    </div>
+                    <h3>@item.NombreLab</h3>
+                    <p>Capacidad máxima: <strong>@item.Capacidad alumnos</strong></p>
+                    <a href="@Url.Action("VerCalendario", "Reservas", new { id = item.LabID })" class="btn btn-success btn-lg btn-block">
+                        <i class="glyphicon glyphicon-calendar"></i> Ver Disponibilidad
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .lab-card {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+        transition: 0.3s;
+        border: 1px solid #eee;
+    }
+
+        .lab-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+    .lab-icon {
+        font-size: 50px;
+        color: #27ae60;
+        margin-bottom: 15px;
+    }
+</style>

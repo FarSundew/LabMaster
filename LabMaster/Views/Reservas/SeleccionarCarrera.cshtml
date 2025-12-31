@@ -1,0 +1,48 @@
+﻿@model IEnumerable<LabMaster.Models.Carrera>
+
+@{
+    ViewBag.Title = "Seleccionar Carrera";
+}
+
+<div class="container" style="margin-top: 30px;">
+    <div class="text-center">
+        <h1 class="display-4">Bienvenido, Docente</h1>
+        <p class="lead">Para comenzar su reserva, elija la carrera correspondiente:</p>
+    </div>
+    <hr />
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm border-primary">
+                    <div class="card-body text-center d-flex flex-column">
+                        <h3 class="card-title text-primary">@item.NombreCarrera</h3>
+                        <p class="card-text text-muted">Haga clic abajo para ver los laboratorios disponibles de esta facultad.</p>
+                        <div class="mt-auto">
+                            <a href="@Url.Action("VerLaboratorios", "Reservas", new { id = item.CarreraID })"
+                               class="btn btn-primary btn-lg w-100">
+                                <i class="glyphicon glyphicon-education"></i> Ver Laboratorios
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    /* Un poco de estilo extra para que se vea profesional */
+    .card {
+        transition: transform 0.2s;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+    }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12) !important;
+        }
+</style>

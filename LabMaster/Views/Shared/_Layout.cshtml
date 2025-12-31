@@ -1,0 +1,120 @@
+﻿@using Microsoft.AspNet.Identity
+@using LabMaster.Models
+@using Microsoft.AspNet.Identity.EntityFramework
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - LabMaster</title>
+    @Styles.Render("~/Content/css")
+    <style>
+        body {
+            margin: 0;
+            background-color: #f4f7f6;
+        }
+
+        #sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #2c3e50;
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        #content {
+            margin-left: 250px;
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        .nav-link {
+            color: #bdc3c7;
+            padding: 15px 20px;
+            display: block;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+            .nav-link:hover {
+                background: #34495e;
+                color: white;
+                padding-left: 30px;
+            }
+
+        .sidebar-header {
+            padding: 20px;
+            background: #1a252f;
+            text-align: center;
+        }
+
+        .user-panel {
+            padding: 15px;
+            border-bottom: 1px solid #3e4f5f;
+            font-size: 0.85em;
+        }
+
+        hr {
+            border-top: 1px solid #3e4f5f;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="glyphicon glyphicon-lamp"></i> LabMaster</h3>
+        </div>
+
+        <div class="user-panel">
+            @if (Request.IsAuthenticated)
+            {
+                var manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
+                var user = manager.FindById(User.Identity.GetUserId());
+                <span class="text-info"><i class="glyphicon glyphicon-user"></i> @(user?.NombreCompleto ?? User.Identity.Name)</span>
+            }
+            else
+            { <span>Invitado</span>}
+        </div>
+
+        <nav>
+            <a href="@Url.Action("Index","Home")" class="nav-link"><i class="glyphicon glyphicon-home"></i> Inicio</a>
+
+            @if (User.IsInRole("Admin"))
+            {
+                <hr />
+                <div style="padding-left:20px; font-size:0.7em; color:#7f8c8d;">ADMINISTRACIÓN</div>
+                <a href="@Url.Action("Index","Carreras")" class="nav-link"><i class="glyphicon glyphicon-book"></i> Carreras</a>
+                <a href="@Url.Action("Index","Laboratorios")" class="nav-link"><i class="glyphicon glyphicon-th-list"></i> Laboratorios</a>
+                <a href="@Url.Action("Index","Insumos")" class="nav-link"><i class="glyphicon glyphicon-wrench"></i> Insumos</a>
+            }
+
+            @if (Request.IsAuthenticated)
+            {
+                <hr />
+                <div style="padding-left:20px; font-size:0.7em; color:#7f8c8d;">SERVICIOS</div>
+                <a href="@Url.Action("SeleccionarCarrera","Reservas")" class="nav-link"><i class="glyphicon glyphicon-plus"></i> Nueva Reserva</a>
+                <a href="@Url.Action("Index","Reservas")" class="nav-link"><i class="glyphicon glyphicon-calendar"></i> Mis Horarios</a>
+            }
+            <hr />
+            @Html.Partial("_LoginPartial")
+        </nav>
+    </div>
+
+    <div id="content">
+        @RenderBody()
+        <footer style="margin-top: 50px;">
+            <p>&copy; @DateTime.Now.Year - LabMaster System</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

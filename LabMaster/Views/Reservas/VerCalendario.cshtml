@@ -1,0 +1,108 @@
+﻿@{
+    ViewBag.Title = "Calendario de Disponibilidad";
+    var horas = new string[] { "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00" };
+    var dias = new string[] { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes" };
+}
+
+<div class="container" style="margin-top: 20px;">
+    <h2>Calendario: <strong>@ViewBag.LabNombre</strong></h2>
+    <p class="text-muted">Haz clic en los horarios que necesites (puedes seleccionar varios).</p>
+    <hr />
+
+    <table class="table table-bordered shadow-sm" id="calendarioReservas">
+        <thead class="bg-dark text-white">
+            <tr>
+                <th class="text-center">Hora</th>
+                @foreach (var d in dias)
+                {
+                    <th class="text-center">@d</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var h in horas)
+            {
+                <tr>
+                    <td class="bg-light" style="font-weight:bold; vertical-align:middle;">@h</td>
+                    @foreach (var d in dias)
+                    {
+                        <td class="celda-hora"
+                            data-dia="@d"
+                            data-hora="@h"
+                            style="cursor:pointer; text-align:center; transition: 0.3s; padding: 15px;">
+                            <span class="label label-success">Disponible</span>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @* Formulario para enviar la selección múltiple *@
+    @using (Html.BeginForm("ConfirmarReserva", "Reservas", FormMethod.Get, new { id = "formCalendario" }))
+    {
+        @* Pasamos el ID del laboratorio *@
+        <input type="hidden" name="labId" value="@ViewBag.LabID" />
+        @* Este campo guardará los horarios separados por comas *@
+        <input type="hidden" name="horariosSeleccionados" id="hiddenHorarios" />
+
+        <div id="resumenSeleccion" class="alert alert-warning" style="display:none; margin-top: 15px;">
+            <i class="glyphicon glyphicon-info-sign"></i>
+            <strong>Seleccionados:</strong> <span id="listaTexto"></span>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+            <button type="submit" id="btnFinalizar" class="btn btn-primary btn-lg" disabled>
+                Continuar con la Reserva (<span id="contador">0</span>)
+                <i class="glyphicon glyphicon-arrow-right"></i>
+            </button>
+        </div>
+    }
+</div>
+
+@section scripts {
+    <script>
+        // Arreglo para guardar las selecciones
+        let seleccionados = [];
+
+        $(".celda-hora").click(function () {
+            const dia = $(this).data("dia");
+            const hora = $(this).data("hora");
+            const valor = dia + " | " + hora; // Formato para el usuario
+
+            const index = seleccionados.indexOf(valor);
+
+            if (index > -1) {
+                // Quitar selección (Toggle Off)
+                seleccionados.splice(index, 1);
+                $(this).css("background-color", "");
+                $(this).find("span")
+                    .text("Disponible")
+                    .addClass("label-success")
+                    .removeClass("label-primary");
+            } else {
+                // Agregar selección (Toggle On)
+                seleccionados.push(valor);
+                $(this).css("background-color", "#d9edf7"); // Color azul claro de selección
+                $(this).find("span")
+                    .text("SELECCIONADO")
+                    .removeClass("label-success")
+                    .addClass("label-primary");
+            }
+
+            // Actualizar interfaz y campo oculto
+            $("#hiddenHorarios").val(seleccionados.join(","));
+            $("#contador").text(seleccionados.length);
+
+            // Habilitar botón solo si hay al menos una selección
+            $("#btnFinalizar").prop("disabled", seleccionados.length === 0);
+
+            if (seleccionados.length > 0) {
+                $("#resumenSeleccion").fadeIn();
+                $("#listaTexto").text(seleccionados.join(" | "));
+            } else {
+                $("#resumenSeleccion").fadeOut();
+            }
+        });
+    </script>
+}

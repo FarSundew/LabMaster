@@ -1,0 +1,33 @@
+﻿@model IEnumerable<LabMaster.Models.Reserva>
+
+<div class="container">
+    <h2><i class="glyphicon glyphicon-list-alt"></i> Mis Horarios Reservados</h2>
+    <hr />
+
+    <table class="table table-hover shadow-sm">
+        <thead class="bg-primary text-white">
+            <tr>
+                <th>Docente</th> 
+                <th>Laboratorio</th>
+                <th>Horario</th>
+                <th>Motivo</th>
+                <th>Fecha de Solicitud</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <strong>@(item.Usuario?.NombreCompleto ?? "Usuario no identificado")</strong><br />
+                        <small class="text-muted">@item.Usuario.Email</small>
+                    </td>
+                    <td><strong>@item.Laboratorio.NombreLab</strong></td>
+                    <td><span class="label label-info">@item.HoraInicio</span></td>
+                    <td>@item.Motivo</td>
+                    <td>@item.FechaReserva.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>    
+</div>
